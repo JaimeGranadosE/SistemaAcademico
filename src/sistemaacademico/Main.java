@@ -25,8 +25,12 @@ public class Main {
             System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
 
-            opcion = scanner.nextInt();
-            scanner.nextLine();
+           try {
+            opcion = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                  System.out.println("Debe ingresar un número válido.");
+                  opcion = -1;
+            }
 
             switch (opcion) {
                 case 1:
@@ -54,22 +58,45 @@ public class Main {
         } while (opcion != 0);
     }
     
-    public static void registrarEstudiante() {
-        System.out.print("Código: ");
-        String codigo = scanner.nextLine();
+  public static void registrarEstudiante() {
 
-        System.out.print("Nombre: ");
-        String nombre = scanner.nextLine();
+    System.out.print("Código: ");
+    String codigo = scanner.nextLine();
 
-        System.out.print("Edad: ");
-        int edad = scanner.nextInt();
-        scanner.nextLine();
-
-        Estudiante estudiante = new Estudiante(codigo, nombre, edad);
-        listaEstudiantes.add(estudiante);
-
-        System.out.println("Estudiante registrado correctamente.");
+    // Validar que no exista el código
+    for (Estudiante e : listaEstudiantes) {
+        if (e.getCodigo().equalsIgnoreCase(codigo)) {
+            System.out.println("Error: Ya existe un estudiante con ese código.");
+            return;
+        }
     }
+
+    System.out.print("Nombre: ");
+    String nombre = scanner.nextLine();
+
+    int edad;
+
+    while (true) {
+        try {
+            System.out.print("Edad: ");
+            edad = Integer.parseInt(scanner.nextLine());
+
+            if (edad < 0) {
+                System.out.println("La edad no puede ser negativa.");
+            } else {
+                break;
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Debe ingresar un número válido.");
+        }
+    }
+
+    Estudiante estudiante = new Estudiante(codigo, nombre, edad);
+    listaEstudiantes.add(estudiante);
+
+    System.out.println("Estudiante registrado correctamente.");
+}
     
     public static void listarEstudiantes() {
         if (listaEstudiantes.isEmpty()) {
@@ -96,27 +123,44 @@ public class Main {
         System.out.println("Estudiante no encontrado.");
     }
     
-    public static void actualizarEstudiante() {
-        System.out.print("Ingrese código del estudiante a actualizar: ");
-        String codigo = scanner.nextLine();
+   public static void actualizarEstudiante() {
 
-        for (Estudiante e : listaEstudiantes) {
-            if (e.getCodigo().equalsIgnoreCase(codigo)) {
+    System.out.print("Ingrese código del estudiante a actualizar: ");
+    String codigo = scanner.nextLine();
 
-                System.out.print("Nuevo nombre: ");
-                e.setNombre(scanner.nextLine());
+    for (Estudiante e : listaEstudiantes) {
+        if (e.getCodigo().equalsIgnoreCase(codigo)) {
 
-                System.out.print("Nueva edad: ");
-                e.setEdad(scanner.nextInt());
-                scanner.nextLine();
+            System.out.print("Nuevo nombre: ");
+            e.setNombre(scanner.nextLine());
 
-                System.out.println("Estudiante actualizado correctamente.");
-                return;
+            int nuevaEdad;
+
+            while (true) {
+                try {
+                    System.out.print("Nueva edad: ");
+                    nuevaEdad = Integer.parseInt(scanner.nextLine());
+
+                    if (nuevaEdad < 0) {
+                        System.out.println("La edad no puede ser negativa.");
+                    } else {
+                        break;
+                    }
+
+                } catch (NumberFormatException ex) {
+                    System.out.println("Debe ingresar un número válido.");
+                }
             }
-        }
 
-        System.out.println("Estudiante no encontrado.");
+            e.setEdad(nuevaEdad);
+
+            System.out.println("Estudiante actualizado correctamente.");
+            return;
+        }
     }
+
+    System.out.println("Estudiante no encontrado.");
+}
     
     public static void eliminarEstudiante() {
         System.out.print("Ingrese código del estudiante a eliminar: ");
